@@ -5,7 +5,7 @@ BINDIR    ?= $(DESTDIR)$(PREFIX)/bin/
 MANDIR    ?= $(DESTDIR)$(PREFIX)/share/man/man1/
 
 SOURCES   := $(wildcard src/*)
-SCDOCS    := $(wildcard man/*.1.md)
+SCDOCS    := $(wildcard doc/*.1.md)
 MANPAGES  := $(SCDOCS:.1.md=.1)
 ZMANPAGES := $(MANPAGES:.1=.1.gz)
 
@@ -24,10 +24,10 @@ install: $(SOURCES) $(ZMANPAGES)
 	@test -d $(MANDIR) || mkdir -p $(MANDIR)
 	$(INSTALL) -m 0644 $(ZMANPAGES) $(MANDIR)
 
-man/%.1: man/%.1.md
+doc/%.1: doc/%.1.md
 	@$(SCDOC) <$< >$@
 
-man/%.1.gz: man/%.1
+doc/%.1.gz: doc/%.1
 	@$(GZIP) -c $< >$@
 
 patch-env: $(SOURCES)
@@ -35,7 +35,7 @@ patch-env: $(SOURCES)
 
 .PHONY: mostlyclean distclean clean
 mostlyclean:
-	@rm -vf *~ src/*~ man/*~
+	@rm -vf *~ src/*~ doc/*~
 clean: mostlyclean
 	@rm -vf $(ZMANPAGES)
 distclean: clean
