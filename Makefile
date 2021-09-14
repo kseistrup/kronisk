@@ -35,7 +35,7 @@ patch-env: $(SOURCES)
 
 .PHONY: mostlyclean distclean clean
 mostlyclean:
-	@rm -vf *~ src/*~ doc/*~
+	@rm -vf *~ src/*~ doc/*~ arch/*~
 clean: mostlyclean
 	@rm -vf $(ZMANPAGES)
 distclean: clean
