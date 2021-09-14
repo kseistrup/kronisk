@@ -1,0 +1,4 @@
+[MESSAGE CONTROL]
+# W1510: Using subprocess.run without explicitly set check is
+#        not recommended. (subprocess-run-check)
+disable=W1510
