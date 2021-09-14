@@ -1,0 +1,44 @@
+# Maintainer: Klaus Alexander Seiﬆrup <klaus@seistrup.dk>
+# -*- mode: sh -*-
+
+pkgname=kronisk
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Runs a command quietly unless it fails. Python implementation of chronic(1).'
+arch=('any')
+url="https://github.com/kseistrup/kronisk"
+license=('GPL3')
+depends=('python')
+optdepends=('scdoc: for recompiling manual pages')
+source=(
+  "https://github.com/kseistrup/$pkgname/releases/download/v$pkgver/$pkgname-$pkgver.tar.xz"
+)
+md5sums=(
+  '3d0a37aa62f9d75b0d2469a469bb1674'
+)
+sha1sums=(
+  'bd1ca7f66a33fdac1ef5235a25f4c7d698bebf31'
+)
+sha256sums=(
+  'afc8d17573808970eef7b18f35a78e08c9fe0e196f2c539811f7949002107d88'
+)
+sha512sums=(
+  'beaca76a9d27966f91db95ad9073c1581f15ba51ea00f613da1c3f4ad0f7d12bc37e9a3130cb20b7d09c76568c2b281e5d4ae3852649bffdea2adda67531d3e0'
+)
+b2sums=(
+  '803a89b3127c3225bc654df4ff7a6dd6f9b34548e23e977d38916029b60009801ee7266b24b17a030a7990d5d2cb1be2143d13c004d042450c8eb2ce80aa5384'
+)
+
+build() {
+  cd "$pkgname-$pkgver" || exit
+
+  make
+}
+
+package() {
+  cd "$pkgname-$pkgver" || exit
+
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+}
+
+# eof
