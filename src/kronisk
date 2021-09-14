@@ -1,0 +1,200 @@
+#!/usr/bin/python
+"""
+Usage: kronisk [OPTIONS] COMMAND [ARG …]
+"""
+#  Author: Klaus Alexander Seistrup
+# License: GNU General Public License v3+ ⌘ http://gplv3.fsf.org/
+#
+# [Metadata just above main() method]
+
+import sys
+import pathlib
+import argparse
+import subprocess
+import locale
+
+try:
+    assert sys.version_info >= (3, 5), 'Python 3.5+ required'
+except (AssertionError, ImportError, ModuleNotFoundError) as oops:
+    print(oops, file=sys.stderr)
+    sys.exit(1)
+
+_ = locale.setlocale(locale.LC_ALL, '')
+
+# Standard IO
+(STDIN, STDOUT, STDERR) = (sys.stdin, sys.stdout, sys.stderr)
+
+TEMPLATE = """
+{key}:
+{value}
+""".lstrip()
+
+
+def oprint(message):
+    """Print MESSAGE to standard output and flush the filepointer
+
+    Args:
+        message::str
+            Message to be printed to standard error
+    """
+    print(message, file=STDOUT, flush=True)
+
+
+def eprint(message):
+    """Print MESSAGE to standard error and flush the filepointer
+
+    Args:
+        message::str
+            Message to be printed to standard error
+    """
+    print(message, file=STDERR, flush=True)
+
+
+def die(reason=None):
+    """Exit gracefully
+
+    Args:
+        reason::Error
+            Optional string or exception
+
+    Returns:
+        This method does not return, instead it exits with
+            0 if no reason is given
+            1 if a reason is given
+    """
+    if reason:
+        eprint(reason)
+
+    sys.exit(1 if reason else 0)
+
+
+def show_output(obuf, ebuf, returncode, errormode=False):
+    """Show output from COMMAND in case of nonzero returncode
+
+    Args:
+        obuf::str
+            Standard output from COMMAND
+        ebuf::str
+            Standard error from COMMAND
+        returncode::int
+            Returncode from COMMAND
+        errormode::bool
+            Trigger standard error reporting
+
+    Returns:
+        This method does not return, instead it exits with
+        a returncode according to the rules
+    """
+    if ebuf:
+        if returncode or errormode:
+            oprint(TEMPLATE.format(key='STDOUT', value=obuf))
+            eprint(TEMPLATE.format(key='STDERR', value=ebuf))
+            oprint(TEMPLATE.format(key='RETVAL', value=returncode))
+            oprint('-- ')
+        sys.exit(2 if errormode and not returncode else returncode)
+
+    die()
+
+
+def run_command(vargs):
+    """Run a command and return standard outpout, error, and exit code
+
+    Args:
+        vargs::list
+            A list holding COMMAND and its ARGs
+
+    Returns:
+        output::tuple
+            A tuple containing (stdout, stderr, returncode) from COMMAND
+    """
+    try:
+        proc = subprocess.run(vargs, capture_output=True)
+        obuf = proc.stdout.decode('utf-8').rstrip()
+        ebuf = proc.stderr.decode('utf-8').rstrip()
+    except UnicodeDecodeError as error:
+        die(error)
+    except (KeyboardInterrupt, BrokenPipeError):
+        die()
+    except (IOError, OSError, MemoryError) as error:
+        die(error)
+
+    return (obuf, ebuf, proc.returncode)
+
+
+############
+# Metadata
+__whoami__ = 'kronisk'
+__revision__ = 1
+__version__ = '2021.09.14-{rev}'.format(rev=__revision__)
+__author__ = 'Klaus Alexander Seistrup <klaus@seistrup.dk>'
+__copyright__ = """{me} {ver}
+Copyright © 2021 Klaus Alexander Seistrup <klaus@seistrup.dk>
+
+This is free software; see the source for copying conditions. There is no
+warranty; not even for merchantability or fitness for a particular purpose.\
+""".format(me=__whoami__, ver=__version__)
+__epilog__ = """
+Kronisk runs a command, and arranges for its standard output and error
+to only be displayed if the command fails — i.e., exits nonzero or
+crashes. If the command succeeds, any output will be hidden.
+
+In case of a nonzero exit code, kronisk will print the command's output
+and error to their respective channels, and exit with the return value
+from the command.
+
+The switch -e/--stderr triggers output when standard error output length
+is nonzero. Without -e kronisk needs a non-zero return value to trigger
+output. In this mode, kronisk's return value will be 2 if the command's
+return value is 0 but the command printed something to standard error.
+""".strip()
+############
+
+
+def main(progname):
+    """Main entry point
+
+    Args:
+        progname::str
+            The basename of the program
+
+    Returns:
+        exitcode::int
+    """
+    parser = argparse.ArgumentParser(
+        prog=progname,
+        formatter_class=argparse.RawTextHelpFormatter,
+        epilog=__epilog__
+    )
+    # Generic arguments
+    parser.add_argument(
+        '--version', action='version',
+        version='%(prog)s/{ver}'.format(ver=__version__),
+        help='show version information and exit'
+    )
+    parser.add_argument(
+        '--copyright', action='version',
+        version=__copyright__,
+        help='show copying policy and exit'
+    )
+    # Specific arguments
+    # parser.add_argument(,help='')
+    parser.add_argument(
+        '-e', '--stderr', action='store_true',
+        help='Triggers output when standard error has nonzero length'
+    )
+    parser.add_argument('COMMAND', help='command to run')
+    parser.add_argument(
+        'ARG', nargs='*', help='optional arguments for COMMAND'
+    )
+
+    args = parser.parse_args()
+    (obuf, ebuf, returncode) = run_command([args.COMMAND] + args.ARG)
+    show_output(obuf, ebuf, returncode, args.stderr)
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(pathlib.Path(sys.argv[0]).name))
+
+# eof
