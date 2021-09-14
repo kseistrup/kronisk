@@ -26,7 +26,7 @@ and error to their respective channels, and exit with the return value
 from the command.
 
 The switch -e/--stderr triggers output when standard error output length
-is nonzero. Without -e kronisk needs a non-zero return value to trigger
+is nonzero. Without -e kronisk needs a nonzero return value to trigger
 output. In this mode, kronisk's return value will be 2 if the command's
 return value is 0 but the command printed something to standard error.
 ```
