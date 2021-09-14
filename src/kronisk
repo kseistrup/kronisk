@@ -125,7 +125,7 @@ def run_command(vargs):
 # Metadata
 __whoami__ = 'kronisk'
 __revision__ = 1
-__version__ = '2021.09.14-{rev}'.format(rev=__revision__)
+__version__ = '0.1.0-{rev}'.format(rev=__revision__)
 __author__ = 'Klaus Alexander Seistrup <klaus@seistrup.dk>'
 __copyright__ = """{me} {ver}
 Copyright © 2021 Klaus Alexander Seistrup <klaus@seistrup.dk>
