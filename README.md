@@ -77,3 +77,5 @@ is nonzero. Without -e kronisk needs a nonzero return value to trigger
 output. In this mode, kronisk's return value will be 2 if the command's
 return value is 0 but the command printed something to standard error.
 ```
+
+See `kronisk(1)` for details.
