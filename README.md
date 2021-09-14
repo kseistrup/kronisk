@@ -1,6 +1,53 @@
-# kronisk
+# Kronisk
 
-Python implementation of the chronic(1) cron tool
+Runs a command quietly unless it fails: a Python implementation of the chronic(1) cron tool
+
+## Requirements
+
+* `python>=3.5`
+
+Compiling the manpage from scratch requires
+
+* `scdoc`
+
+Using `Makefile` to install everything requires
+
+* `make`
+* `install`
+* `gzip`
+
+## Install
+
+Install scripts to `/usr/local/bin` and manpages to `/usr/local/share/man/man1`:
+
+```sh
+$ sudo make install
+```
+
+Install scripts to `$PREFIX/bin` and manpages to `$PREFIX/share/man/man1`:
+
+```sh
+$ sudo make PREFIX=/usr install  # /usr/bin etc.
+```
+
+— or simply copy everything manually:
+
+```sh
+$ sudo mkdir -p /usr/local/bin/              # make sure $BINDIR exists
+$ sudo cp -fax src/kronisk /usr/local/bin/
+$ sudo mkdir -p /usr/local/man/man1          # make sure $MANDIR exists
+$ sudo cp -fax man/kronisk.1 /usr/local/man/man1/
+```
+
+ArchLinux users can use, e.g.:
+
+```sh
+$ yay -S kronisk
+```
+
+in order to install `kronisk` directly from AUR
+
+⌘ https://aur.archlinux.org/packages/kronisk/
 
 ## Usage
 
