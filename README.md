@@ -5,7 +5,7 @@ Python implementation of the chronic(1) cron tool
 ## Usage
 
 ```
-usage: kronisk [OPTIONS] COMMAND [ARG …]
+Usage: kronisk [OPTIONS] COMMAND [ARG …]
 
 positional arguments:
   COMMAND       command to run
