@@ -79,3 +79,21 @@ return value is 0 but the command printed something to standard error.
 ```
 
 See `kronisk(1)` for details.
+
+## Example
+
+Sample output:
+
+```sh
+$ kronisk -- sh -c 'echo this is stdout; echo this is stderr >&2; exit 7'
+STDOUT:
+this is stdout
+
+STDERR:
+this is stderr
+
+RETVAL:
+7
+
+-- 
+```
